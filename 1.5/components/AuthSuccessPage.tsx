@@ -1,105 +1,158 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useSpring } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
 
 interface AuthSuccessPageProps {
   onEnterApp: () => void;
 }
 
 const AuthSuccessPage: React.FC<AuthSuccessPageProps> = ({ onEnterApp }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const springConfig = {
-    stiffness: 100,
-    damping: 20,
-    mass: 1,
-  };
-
-  const blob1X = useSpring(0, springConfig);
-  const blob1Y = useSpring(0, springConfig);
-  const blob2X = useSpring(0, springConfig);
-  const blob2Y = useSpring(0, springConfig);
-  const blob3X = useSpring(0, springConfig);
-  const blob3Y = useSpring(0, springConfig);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        blob1X.set(x);
-        blob1Y.set(y);
-        blob2X.set(x);
-        blob2Y.set(y);
-        blob3X.set(x);
-        blob3Y.set(y);
-      }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let particlesArray: Particle[];
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let mouse = {
+        x: null as number | null,
+        y: null as number | null,
+        radius: 150
+    }
+
+    window.addEventListener('mousemove', function(event) {
+        mouse.x = event.x;
+        mouse.y = event.y;
+    });
+
+    window.addEventListener('mouseout', function(){
+        mouse.x = null;
+        mouse.y = null;
+    })
+
+    class Particle {
+        x: number;
+        y: number;
+        directionX: number;
+        directionY: number;
+        size: number;
+        color: string;
+
+        constructor(x: number, y: number, directionX: number, directionY: number, size: number, color: string) {
+            this.x = x;
+            this.y = y;
+            this.directionX = directionX;
+            this.directionY = directionY;
+            this.size = size;
+            this.color = color;
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+
+        update() {
+            if (this.x > canvas.width || this.x < 0) {
+                this.directionX = -this.directionX;
+            }
+            if (this.y > canvas.height || this.y < 0) {
+                this.directionY = -this.directionY;
+            }
+
+            this.x += this.directionX;
+            this.y += this.directionY;
+
+            this.draw();
+        }
+    }
+
+    function init() {
+        particlesArray = [];
+        let numberOfParticles = (canvas.height * canvas.width) / 9000;
+        for (let i = 0; i < numberOfParticles; i++) {
+            let size = (Math.random() * 2) + 1;
+            let x = (Math.random() * ((window.innerWidth - size * 2) - (size * 2)) + size * 2);
+            let y = (Math.random() * ((window.innerHeight - size * 2) - (size * 2)) + size * 2);
+            let directionX = (Math.random() * 0.4) - 0.2;
+            let directionY = (Math.random() * 0.4) - 0.2;
+            let color = '#81ecec';
+
+            particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+        }
+    }
+
+    function connect() {
+        let opacityValue = 1;
+        for (let a = 0; a < particlesArray.length; a++) {
+            for (let b = a; b < particlesArray.length; b++) {
+                let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                               + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                
+                if (distance < (canvas.width/7) * (canvas.height/7)) {
+                    opacityValue = 1 - (distance / 20000);
+                    ctx.strokeStyle = 'rgba(129, 236, 236,' + opacityValue + ')';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                    ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        for (let i = 0; i < particlesArray.length; i++) {
+            particlesArray[i].update();
+        }
+        connect();
+    }
+
+    const handleResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init();
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [blob1X, blob1Y, blob2X, blob2Y, blob3X, blob3Y]);
+    window.addEventListener('resize', handleResize);
 
-  const title = "Welcome to wnz's OJ!".split(" ");
+    init();
+    animate();
+
+    return () => {
+        window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative min-h-screen w-full overflow-hidden bg-[#F8F9FA] flex items-center justify-center"
-      style={{ fontFamily: 'Inter, Roboto, sans-serif' }}
-    >
-      {/* Fluid Background Blobs */}
-      <motion.div
-        className="absolute w-96 h-96 bg-[#4285F4] rounded-full blur-3xl"
-        style={{ x: blob1X, y: blob1Y, opacity: 0.5, top: -150, left: -150 }}
-      />
-      <motion.div
-        className="absolute w-80 h-80 bg-[#4285F4] rounded-full blur-3xl"
-        style={{ x: blob2X, y: blob2Y, opacity: 0.3, bottom: -100, right: -100 }}
-        transition={{ type: 'spring', stiffness: 50, damping: 20 }}
-      />
-      <motion.div
-        className="absolute w-72 h-72 bg-[#4285F4] rounded-full blur-3xl"
-        style={{ x: blob3X, y: blob3Y, opacity: 0.2, bottom: 50, left: 50 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 30 }}
-      />
-
-      {/* Glassmorphism Card */}
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-        className="relative z-10 w-full max-w-md mx-4 bg-white/70 backdrop-blur-xl rounded-2xl shadow-2xl shadow-gray-300/20 p-12"
-      >
-        {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900">
-          {title.map((el, i) => (
-            <motion.span
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 100, damping: 12, delay: i * 0.1 }}
-              key={i}
-              className="inline-block"
-            >
-              {el}{' '}
-            </motion.span>
-          ))}
-        </h1>
-
-        {/* Button */}
-        <motion.button
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 15, delay: title.length * 0.1 }}
-          whileHover={{ scale: 1.1, transition: { type: 'spring', stiffness: 200, damping: 10 } }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onEnterApp}
-          className="w-full px-8 py-4 bg-[#4285F4] rounded-full text-white font-semibold text-lg"
-        >
-          Enter
-        </motion.button>
-      </motion.div>
+    <div>
+        <canvas ref={canvasRef} id="canvas-bg"></canvas>
+        <div className="login-container">
+            <div className="login-box">
+                <h2>USER LOGIN</h2>
+                <form>
+                    <div className="input-group">
+                        <label>用户名 / 手机号</label>
+                        <input type="text" placeholder="请输入账号" />
+                    </div>
+                    <div className="input-group">
+                        <label>密码</label>
+                        <input type="password" placeholder="请输入密码" />
+                    </div>
+                    <button type="button" className="btn-login" onClick={onEnterApp}>登 录</button>
+                </form>
+            </div>
+        </div>
     </div>
   );
 };
