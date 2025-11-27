@@ -7,9 +7,12 @@ import ProblemDisplay from './components/ProblemDisplay';
 import CodeEditor from './components/CodeEditor';
 import ResultPanel from './components/ResultPanel';
 import HintModal from './components/HintModal';
+import AuthSuccessPage from './components/AuthSuccessPage';
 import { judgeCode, initializePyodide } from './services/pyodideService';
 
 const App: React.FC = () => {
+  const [showAuthSuccess, setShowAuthSuccess] = useState(true); // Control Auth Page visibility
+
   const [selectedProblem, setSelectedProblem] = useState<Problem>(PROBLEMS[0]); // 当前选中的题目
   const [isHintModalOpen, setIsHintModalOpen] = useState(false); // 提示模态框是否打开
   const [userCode, setUserCode] = useState<string>(''); // 用户当前编辑的代码
@@ -139,6 +142,15 @@ const App: React.FC = () => {
       setJudgeStatus('error');
     }
   };
+
+  // Handle entering the app
+  const handleEnterApp = () => {
+    setShowAuthSuccess(false);
+  };
+
+  if (showAuthSuccess) {
+    return <AuthSuccessPage onEnterApp={handleEnterApp} />;
+  }
 
   // 全屏加载遮罩
   if (!isEngineReady) {
