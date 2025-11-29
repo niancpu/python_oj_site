@@ -67,24 +67,7 @@ except (ValueError, IndexError):
                 output: '55',
             }
         ],
-        starterCode: `
-def fibonacci(n):
-    if n <= 1:
-        return n
-    a, b = 0, 1
-    for _ in range(2, n + 1):
-        a, b = b, a + b
-    return b
-
-try:
-    num = int(input())
-    if num < 0:
-        print("请输入非负整数")
-    else:
-        print(fibonacci(num))
-except ValueError:
-    print("输入格式错误。")
-`.trim(),
+        starterCode: '# 请在此处编写代码',
         testCases: algorithmTestCases[19]
     }
 ];

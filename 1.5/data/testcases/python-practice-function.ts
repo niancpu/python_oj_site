@@ -226,5 +226,138 @@ export const pythonPracticeFunctionTestCases: Record<number, TestCase[]> = {
         { input: '4', expectedOutput: '0 1 4 9' },
         { input: '6', expectedOutput: '0 1 4 9 16 25' },
         { input: '7', expectedOutput: '0 1 4 9 16 25 36' }
+    ],
+    111: [ // Map 函数
+        { input: '1 2 3', expectedOutput: '2 4 6' },
+        { input: '0 0 0', expectedOutput: '0 0 0' },
+        { input: '-1 -2 -3', expectedOutput: '-2 -4 -6' },
+        { input: '10 20 30', expectedOutput: '20 40 60' },
+        { input: '5', expectedOutput: '10' }
+    ],
+    112: [ // Filter 函数
+        { input: '1 2 3 4 5', expectedOutput: '2 4' },
+        { input: '1 3 5', expectedOutput: '' },
+        { input: '2 4 6', expectedOutput: '2 4 6' },
+        { input: '0 1 2', expectedOutput: '0 2' },
+        { input: '10 11 12', expectedOutput: '10 12' }
+    ],
+    113: [ // Zip 函数
+        { input: '1 2 3\na b c', expectedOutput: "[(1, 'a'), (2, 'b'), (3, 'c')]" },
+        { input: '1\na', expectedOutput: "[(1, 'a')]" },
+        { input: '10 20\nx y', expectedOutput: "[(10, 'x'), (20, 'y')]" },
+        { input: '0 0\n0 0', expectedOutput: "[(0, '0'), (0, '0')]" },
+        { input: '5 5 5\nA B C', expectedOutput: "[(5, 'A'), (5, 'B'), (5, 'C')]" }
+    ],
+    114: [ // Enumerate 函数
+        { input: 'apple banana', expectedOutput: 'Index: 0, Value: apple\nIndex: 1, Value: banana' },
+        { input: 'a b c', expectedOutput: 'Index: 0, Value: a\nIndex: 1, Value: b\nIndex: 2, Value: c' },
+        { input: 'one', expectedOutput: 'Index: 0, Value: one' },
+        { input: 'x y z w', expectedOutput: 'Index: 0, Value: x\nIndex: 1, Value: y\nIndex: 2, Value: z\nIndex: 3, Value: w' },
+        { input: 'hello world', expectedOutput: 'Index: 0, Value: hello\nIndex: 1, Value: world' }
+    ],
+    115: [ // Sorted 函数
+        { input: 'apple fig banana', expectedOutput: 'fig apple banana' },
+        { input: 'a bb ccc', expectedOutput: 'a bb ccc' },
+        { input: 'ccc bb a', expectedOutput: 'a bb ccc' },
+        { input: 'same same same', expectedOutput: 'same same same' },
+        { input: 'long short mid', expectedOutput: 'mid long short' } // mid(3) long(4) short(5)
+    ],
+    116: [ // Any 和 All 函数
+        { input: '1 5 12', expectedOutput: 'True\nTrue' },
+        { input: '0 5 12', expectedOutput: 'False\nTrue' },
+        { input: '0 0 0', expectedOutput: 'False\nFalse' },
+        { input: '1 2 3', expectedOutput: 'True\nFalse' },
+        { input: '11 12 13', expectedOutput: 'True\nTrue' }
+    ],
+    117: [ // Random 模块
+        { input: '', expectedOutput: '82' }, // Seed 42 -> 82
+        { input: 'any', expectedOutput: '82' },
+        { input: '1', expectedOutput: '82' },
+        { input: 'test', expectedOutput: '82' },
+        { input: '0', expectedOutput: '82' }
+    ],
+    118: [ // Re 模块
+        { input: 'test@example.com', expectedOutput: 'Valid' },
+        { input: 'invalid-email', expectedOutput: 'Invalid' },
+        { input: 'user@domain', expectedOutput: 'Invalid' }, // Missing .
+        { input: '@domain.com', expectedOutput: 'Invalid' }, // Missing user
+        { input: 'user.name@domain.co.uk', expectedOutput: 'Valid' }
+    ],
+    119: [ // Collections Counter
+        { input: 'hello', expectedOutput: 'e: 1\nh: 1\nl: 2\no: 1' },
+        { input: 'abc', expectedOutput: 'a: 1\nb: 1\nc: 1' },
+        { input: 'aabbcc', expectedOutput: 'a: 2\nb: 2\nc: 2' },
+        { input: 'aaa', expectedOutput: 'a: 3' },
+        { input: 'banana', expectedOutput: 'a: 3\nb: 1\nn: 2' }
+    ],
+    121: [ // Itertools Product
+        { input: '1 2\na b', expectedOutput: "[(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')]" },
+        { input: '1\na', expectedOutput: "[(1, 'a')]" },
+        { input: '1 2 3\nx', expectedOutput: "[(1, 'x'), (2, 'x'), (3, 'x')]" },
+        { input: '0\n0 1', expectedOutput: "[(0, '0'), (0, '1')]" },
+        { input: '5 6\nA B', expectedOutput: "[(5, 'A'), (5, 'B'), (6, 'A'), (6, 'B')]" }
+    ],
+    122: [ // Functools Reduce
+        { input: '1 2 3 4', expectedOutput: '24' },
+        { input: '5 5 5', expectedOutput: '125' },
+        { input: '10 10', expectedOutput: '100' },
+        { input: '1 2 3 4 5', expectedOutput: '120' },
+        { input: '2 3', expectedOutput: '6' }
+    ],
+    123: [ // Try-Except
+        { input: '10 2', expectedOutput: '5.0' },
+        { input: '10 0', expectedOutput: 'Division by zero' },
+        { input: '5 2', expectedOutput: '2.5' },
+        { input: '0 5', expectedOutput: '0.0' },
+        { input: '100 10', expectedOutput: '10.0' }
+    ],
+    124: [ // Decorator
+        { input: 'hello', expectedOutput: 'HELLO' },
+        { input: 'world', expectedOutput: 'WORLD' },
+        { input: 'Python', expectedOutput: 'PYTHON' },
+        { input: 'Decorator', expectedOutput: 'DECORATOR' },
+        { input: 'test', expectedOutput: 'TEST' }
+    ],
+    125: [ // Closure
+        { input: '3\n5', expectedOutput: '15' },
+        { input: '2\n10', expectedOutput: '20' },
+        { input: '10\n10', expectedOutput: '100' },
+        { input: '5\n0', expectedOutput: '0' },
+        { input: '0\n5', expectedOutput: '0' }
+    ],
+    126: [ // Set Operations
+        { input: '1 2 3\n3 4 5', expectedOutput: '1 2 3 4 5\n3' },
+        { input: '1 2\n1 2', expectedOutput: '1 2\n1 2' },
+        { input: '1 2\n3 4', expectedOutput: '1 2 3 4\n' }, // Empty intersection -> empty line
+        { input: '1 2 3\n2 3 4', expectedOutput: '1 2 3 4\n2 3' },
+        { input: '5\n5', expectedOutput: '5\n5' }
+    ],
+    127: [ // String Module
+        { input: '5', expectedOutput: 'abcde' },
+        { input: '1', expectedOutput: 'a' },
+        { input: '26', expectedOutput: 'abcdefghijklmnopqrstuvwxyz' },
+        { input: '10', expectedOutput: 'abcdefghij' },
+        { input: '3', expectedOutput: 'abc' }
+    ],
+    128: [ // Math GCD
+        { input: '12 18', expectedOutput: '6' },
+        { input: '10 5', expectedOutput: '5' },
+        { input: '7 13', expectedOutput: '1' },
+        { input: '100 10', expectedOutput: '10' },
+        { input: '24 36', expectedOutput: '12' }
+    ],
+    129: [ // Statistics
+        { input: '1 2 3 4 5', expectedOutput: '3.0\n3' },
+        { input: '1 1 1', expectedOutput: '1.0\n1.0' }, // median of 1,1,1 is 1.0
+        { input: '1 2 3 4', expectedOutput: '2.5\n2.5' },
+        { input: '10 20 30', expectedOutput: '20.0\n20.0' },
+        { input: '0 100', expectedOutput: '50.0\n50.0' }
+    ],
+    130: [ // Datetime Timedelta
+        { input: '2023-01-01\n10', expectedOutput: '2023-01-11' },
+        { input: '2023-01-01\n1', expectedOutput: '2023-01-02' },
+        { input: '2023-01-01\n365', expectedOutput: '2024-01-01' },
+        { input: '2023-12-31\n1', expectedOutput: '2024-01-01' },
+        { input: '2023-02-28\n1', expectedOutput: '2023-03-01' }
     ]
 };

@@ -64,10 +64,31 @@ const ProblemList: React.FC<ProblemListProps> = ({ problems, selectedProblemId, 
       }
     }
 
-    return categoryOrder.map(category => ({
-      name: category,
-      problems: groups[category],
-    })).filter(group => group.problems.length > 0);
+    // 难度权重映射
+    const difficultyWeight: Record<string, number> = {
+      '简单': 1,
+      '中等': 2,
+      '困难': 3
+    };
+
+    return categoryOrder.map(category => {
+      // 对每个分类下的题目进行排序
+      const sortedProblems = groups[category].sort((a, b) => {
+        // 1. 先按难度排序
+        const weightA = difficultyWeight[a.difficulty] || 99;
+        const weightB = difficultyWeight[b.difficulty] || 99;
+        if (weightA !== weightB) {
+          return weightA - weightB;
+        }
+        // 2. 难度相同按 ID 排序
+        return a.id - b.id;
+      });
+
+      return {
+        name: category,
+        problems: sortedProblems,
+      };
+    }).filter(group => group.problems.length > 0);
   }, [problems]);
 
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(() => {
